@@ -17,6 +17,7 @@ import ButtonPage from "../pages/component/ButtonPage";
 import DocumentationPage from "../pages/documentation/DocumentationPage";
 import Login from "../pages/Login/Login";
 import Vehicle from "../pages/Vehicle/vehicle";
+import Chauffuer from "../pages/Chauffuer/chauffuer";
 
 const appRoutes: RouteType[] = [
   {
@@ -56,11 +57,11 @@ const appRoutes: RouteType[] = [
         },
       },
       {
-        path: "/dashboard/analytics",
-        element: <AnalyticsPage />,
-        state: "dashboard.analytics",
+        path: "/dashboard/chauffuer",
+        element: <Chauffuer />,
+        state: "dashboard.chauffuer",
         sidebarProps: {
-          displayText: "Analytic"
+          displayText: "Chauffuer"
         }
       },
       {
