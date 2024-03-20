@@ -15,25 +15,25 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import AlertPage from "../pages/component/AlertPage";
 import ButtonPage from "../pages/component/ButtonPage";
 import DocumentationPage from "../pages/documentation/DocumentationPage";
-import Login from "../pages/Login/Login";
+
 import Vehicle from "../pages/Vehicle/vehicle";
 import Chauffuer from "../pages/Chauffuer/chauffuer";
 
 const appRoutes: RouteType[] = [
-  {
-    index: true,
-    element: <HomePage/>,
-    state: "home"
-  },
-  {
-    path: "/installation",
-    element: <Login />,
-    state: "installation",
-    sidebarProps: {
-      displayText: "Login",
-      icon: <FileDownloadOutlinedIcon />
-    }
-  },
+  // {
+  //   index: true,
+  //   element: <HomePage/>,
+  //   state: "home"
+  // },
+  // {
+  //   path: "/installation",
+  //   element: <Login />,
+  //   state: "installation",
+  //   sidebarProps: {
+  //     displayText: "Login",
+  //     icon: <FileDownloadOutlinedIcon />
+  //   }
+  // },
   {
     path: "/dashboard",
     element: <DashboardPageLayout />,

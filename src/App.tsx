@@ -3,7 +3,6 @@ import MainLayout from "./components/layout/MainLayout";
 import { routes } from "./routes";
 import Login from "./pages/Login/Login";
 import Vehicle from "./pages/Vehicle/vehicle";
-import AutoHeightOverlayNoSnap from "./pages/Vehicle/v";
 import Chauffuer from "./pages/Chauffuer/chauffuer";
 
 
@@ -11,11 +10,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/login" element={<Login />} />  
+      <Route path="/" index element={<Login />} />  
       <Route path="/v" element={<Vehicle/>} /> 
-      <Route path="/c" element={<Chauffuer/>} /> 
-      <Route path="/vj" element={<AutoHeightOverlayNoSnap/>} /> 
-        <Route path="/" element={<MainLayout />}>
+      <Route path="/c" element={<Chauffuer/>} />    
+      <Route path="/" element={<MainLayout />}>
           {routes}
         </Route>
 
