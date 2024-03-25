@@ -31,26 +31,7 @@ export default function Login() {
     authhandle();
   };
   
-  // const authhandle = () => {
-  //   axios.post("https://localhost:7202/api/Auth/Login", { phoneNumber, password })  
-  //     .then((res) => {
-      
-  //       if (res.status === 200) {
-          
-  //         localStorage.setItem('jwt', res.data.body.jwt);
-  //         localStorage.setItem('user', JSON.stringify(res.data.body.user));
-  //         if (res.data.body.user.phoneNumber === '+94770068936') {
-  //           navigate("/");
-  //         } else {
-  //           navigate("/user/profile");
-  //         }
-  //         toast.success('Login Successful');
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       toast.error('Invalid! Please check your email or password.');
-  //     });
-  // }
+
   const authhandle = () => {
     axios.post(
       "https://localhost:7202/api/Auth/Login",

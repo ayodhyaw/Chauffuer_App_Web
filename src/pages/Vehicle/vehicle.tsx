@@ -23,9 +23,13 @@ interface Vehicle {
   costPerDay: string;
   brand: { 
     name: string;
+    id:number;
   };
   vehicleType: {
-    name : string
+    name : string;
+    id:number;
+    
+    
   },
 }
 const useStyles = makeStyles(vehicleConfig);
@@ -45,11 +49,14 @@ const Vehicle: React.FC = () => {
     costPerDay: '',
     brand: {
       name: '',
+      id: 0,
     },
     vehicleType: {
-      name : ''
+      name: '',
+      id: 0,
     },
   });
+  
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -95,8 +102,23 @@ const Vehicle: React.FC = () => {
 
   const addVehicle = async () => {
     try {
-      const response = await axios.post('https://localhost:7202/api/Vehicle/CreateVehicle', newVehicle); 
+      // Find the selected brand by its name and get its ID
+      const selectedBrand = brands.find(brand => brand.name === newVehicle.brand?.name);
+      const brandId = selectedBrand ? selectedBrand.id : null;
+  
+      const selectedVehicleType = vehicleType.find(vehicleType => vehicleType.name === newVehicle.vehicleType?.name);
+      const vehicleTypeId = selectedVehicleType ? selectedVehicleType.id : null;
+      // Include the brand ID in the newVehicle object
+      const vehicleToAdd = {
+        ...newVehicle,
+        brandId: brandId || 0,
+        vehicleTypeId: vehicleTypeId|| 0
+      };
+      
+      console.log(vehicleToAdd,'vehicleToAdd');
+      const response = await axios.post('https://localhost:7202/api/Vehicle/CreateVehicle', vehicleToAdd);
       setVehicles([...vehicles, response.data]);
+      // Reset newVehicle state
       setNewVehicle({
         name: '',
         seatingCapacity: 0,
@@ -104,17 +126,20 @@ const Vehicle: React.FC = () => {
         costPerKm: '',
         costPerHour: '',
         costPerDay: '',
-        brand: {   
+        brand: {
           name: '',
+          id: 0
         },
-        vehicleType:  {   
+        vehicleType: {
           name: '',
+          id: 0
         },
       });
     } catch (error) {
       console.error('Error adding vehicle:', error);
     }
   };
+  
 
   const removeVehicle = async (id: number) => {
     try {
@@ -293,6 +318,7 @@ const Vehicle: React.FC = () => {
               brand: {
                 ...prevState.brand,
                 name: e.target.value,
+                id: parseInt(e.target.value)
               },
             }))
           }
@@ -316,6 +342,7 @@ const Vehicle: React.FC = () => {
               vehicleType: {
                 ...prevState.vehicleType,
                 name: e.target.value,
+                id: parseInt(e.target.value)
               },
             }))
           }
