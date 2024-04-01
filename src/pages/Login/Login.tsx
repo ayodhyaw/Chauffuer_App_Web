@@ -49,10 +49,12 @@ export default function Login() {
         if (res.status === 200) {
           localStorage.setItem('jwt', res.data.loginResponse.token);
           localStorage.setItem('user', JSON.stringify(res.data.loginResponse.id));
+          localStorage.setItem('userDetails', JSON.stringify(res.data.loginResponse));
+          console.log("userDetails",res?.data?.loginResponse)
           //if (res.data.loginResponse.user.phoneNumber === '+94770068936') {
             //navigate("/");
           //} else {
-            navigate("/user/profile");
+            navigate("/dashboard");
           //}
           toast.success('Login Successful');
         }
@@ -62,10 +64,6 @@ export default function Login() {
         toast.error('Invalid! Please check your email or password.');
       });
   }
-
-  
-
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
@@ -106,7 +104,7 @@ export default function Login() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Phone Number"
                 name="email"
                 autoComplete="email"
                 autoFocus

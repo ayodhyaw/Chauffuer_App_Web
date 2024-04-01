@@ -19,7 +19,6 @@ import { vehicleConfig } from '../../configs/vehicleConfig';
 import { DataGrid } from '@mui/x-data-grid';
 import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
-import url from '../../BackendUrl';
 
 interface Vehicle {
   id: number;
@@ -36,23 +35,18 @@ interface Vehicle {
   vehicleType: {
     name : string;
     id:number;
+    
+    
   },
-  company: {
-    name : string;
-    id:number;
-  },
-  companyId: number;
 }
 const useStyles = makeStyles(vehicleConfig);
 
-const Vehicle: React.FC = () => {
+const V: React.FC = () => {
   const classes = useStyles();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [brands, setBrands] = useState<Vehicle[]>([]);
   const[vehicleType, setVhicleType] = useState<Vehicle[]>([]);
-  const[company,setCompany] = useState<Vehicle[]>([]);
-  const {register,handleSubmit,reset} = useForm<Vehicle>()
-
+  const {register,handleSubmit,reset,formState: { errors },} = useForm<Vehicle>()
   const [selectedVehicle, setSelectedVehicle] = useState<Partial<Vehicle>>({
     name: "",
     seatingCapacity: 0,
@@ -60,7 +54,6 @@ const Vehicle: React.FC = () => {
     costPerKm: "",
     costPerHour: "",
     costPerDay: "",
-    companyId:0,
     brand: { 
       name: "",
       id:0,
@@ -69,10 +62,6 @@ const Vehicle: React.FC = () => {
       name : "",
       id:0,
     },
-    company: {
-      name:"",
-      id: 0,
-    }
   });
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false); 
   const [companyIdToDelete, setCompanyIdToDelete] = useState<number | null>(null);
@@ -91,7 +80,7 @@ const Vehicle: React.FC = () => {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await axios.get(`${url}/Brand/GetAllBrands`);
+        const response = await axios.get('https://localhost:7202/api/Brand/GetAllBrands');
         setBrands(response.data);
         console.log(response.data);
         
@@ -105,7 +94,7 @@ const Vehicle: React.FC = () => {
   useEffect(() => {
     const fetchVehicleType = async () => {
       try {
-        const response = await axios.get(`${url}/VehicleType/GetAllVehicleType`);
+        const response = await axios.get('https://localhost:7202/api/VehicleType/GetAllVehicleType');
         setVhicleType(response.data);
         console.log(response.data);
         
@@ -116,25 +105,9 @@ const Vehicle: React.FC = () => {
     fetchVehicleType();
   }, []);
 
-  useEffect(() => {
-    const fetchCompany= async () => {
-      try {
-        const response = await axios.get(`${url}/Company/GetAllCompany`);
-        setCompany(response.data);
-        console.log(response.data);
-        
-      } catch (error) {
-        console.error(' fetching Company:', error);
-      }
-    };
-    fetchCompany();
-  }, []);
-
-  
-
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get(`${url}/Vehicle/GetAllVehicles`); 
+      const response = await axios.get('https://localhost:7202/api/Vehicle/GetAllVehicles'); 
       setVehicles(response.data);
       console.log(response.data);
     } catch (error) {
@@ -152,22 +125,22 @@ const Vehicle: React.FC = () => {
 
         if (selectedVehicle) {
           if (selectedVehicle.id) {
-           const updateObj = {...data, id: selectedVehicle.id,brandId:data.brand.id,vehicleTypeId:data.vehicleType.id,companyId:data.company.id}
+           const updateObj = {...data, id: selectedVehicle.id}
             await axios.put(
-              `${url}/Vehicle/UpdateVehicle?id=${selectedVehicle.id}`,
+              `https://localhost:7202/api/Vehicle/UpdateVehicle?id=${selectedVehicle.id}`,
               updateObj
             );
           } else {
-            const saveObj = {...data,brandId:data.brand.id,vehicleTypeId:data.vehicleType.id,companyId:data.company.id }
+            
             await axios.post(
               "https://localhost:7202/api/Vehicle/CreateVehicle",
-              saveObj
+              data
             );
           }
           reset();
           fetchVehicles();
           setOpenDialog(false);
-          //setSelectedVehicle({});
+          setSelectedVehicle({});
           toast.success("vehicle saved successfully");
         }
       } catch (error) {
@@ -197,7 +170,7 @@ const Vehicle: React.FC = () => {
   const deleteVehicle = async (id: number) => {
     try {
       await axios.delete(
-        `${url}/Vehicle/DeleteVehicle?id=${id}`
+        `https://localhost:7202/api/Vehicle/DeleteVehicle?id=${id}`
       );
       fetchVehicles();
       toast.success("Vehicle deleted successfully");
@@ -208,11 +181,8 @@ const Vehicle: React.FC = () => {
   };
 
   const handleEditCompany = (vehicle: Vehicle) => {
-    console.log(vehicle)
-    
-    setOpenDialog(true);
     setSelectedVehicle(vehicle);
-    console.log(selectedVehicle)
+    setOpenDialog(true);
   };
 
 
@@ -240,7 +210,6 @@ const Vehicle: React.FC = () => {
             { field: 'costPerKm', headerName: 'Cost Per Km', flex: 1 },
             { field: 'costPerHour', headerName: 'Cost Per Hour', flex: 1 },
             { field: 'costPerDay', headerName: 'Cost Per Day', flex: 1 },
-            { field: 'company', headerName: 'Company Name', flex: 1, valueGetter: (params) => params.row.company.name },
             { field: 'brand', headerName: 'Brand Name', flex: 1, valueGetter: (params) => params.row.brand.name },
             { field: 'vehicleType', headerName: 'Vehicle Type ID', flex: 1 , valueGetter: (params) => params.row.vehicleType.name },
             {
@@ -274,12 +243,12 @@ const Vehicle: React.FC = () => {
       </Box>
 
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle></DialogTitle>
+        <DialogTitle>Edit Company</DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <TextField
             label="Name"
-            value={selectedVehicle?.name}
+            defaultValue={selectedVehicle?.name}
             {...register("name")}
             fullWidth
             variant="outlined"
@@ -320,31 +289,25 @@ const Vehicle: React.FC = () => {
           fullWidth
           sx={{ marginBottom: '20px' }}
         />
-        <TextField
-          select
-          label="Company"
-          defaultValue={selectedVehicle.company?.name}
-          {...register("company.id")}
-          fullWidth
-          sx={{ marginBottom: '20px' }}
-        >
-          {company.map((company) => (
-            <MenuItem key={company.id} value={company.id}>
-              {company.name}
-            </MenuItem>
-          ))}
-        </TextField>
-
           <TextField
           select
           label="Brand"
           defaultValue={selectedVehicle.brand?.name}
-          {...register("brand.id")}
+          onChange={(e) =>
+            setSelectedVehicle((prevState) => ({
+              ...prevState,
+              brand: {
+                ...prevState.brand,
+                name: e.target.value,
+                id: parseInt(e.target.value)
+              },
+            }))
+          }
           fullWidth
           sx={{ marginBottom: '20px' }}
         >
           {brands.map((brand) => (
-            <MenuItem key={brand.id} value={brand.id}>
+            <MenuItem key={brand.id} value={brand.name}>
               {brand.name}
             </MenuItem>
           ))}
@@ -354,12 +317,21 @@ const Vehicle: React.FC = () => {
           select
           label="VehicleType"
           defaultValue={selectedVehicle.vehicleType?.name}
-          {...register("vehicleType.id")}
+          onChange={(e) =>
+            setSelectedVehicle((prevState) => ({
+              ...prevState,
+              vehicleType: {
+                ...prevState.vehicleType,
+                name: e.target.value,
+                id: parseInt(e.target.value)
+              },
+            }))
+          }
           fullWidth
           sx={{ marginBottom: '20px' }}
         >
           {vehicleType.map((vehicleType) => (
-            <MenuItem key={vehicleType.id} value={vehicleType.id}>
+            <MenuItem key={vehicleType.id} value={vehicleType.name}>
               {vehicleType.name}
             </MenuItem>
           ))}
@@ -394,9 +366,8 @@ const Vehicle: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <ToastContainer />
     </div>
   );
 };
 
-export default Vehicle;
+export default V;

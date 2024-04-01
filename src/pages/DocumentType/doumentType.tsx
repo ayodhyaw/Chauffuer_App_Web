@@ -19,59 +19,55 @@ import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form"
 import url from "../../BackendUrl";
 
-interface Company {
+interface DocumentType {
   id: number;
   name: string;
-  email: string;
-  phoneNumber: string;
+  description: string; 
 }
 
 const useStyles = makeStyles(vehicleConfig);
 
-const Company: React.FC = () => {
+const DocumentType: React.FC = () => {
   const classes = useStyles();
-  const [Companies, setCompanies] = useState<Company[]>([]);
+  const [documentType, setDocumentTypes] = useState<DocumentType[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState<Partial<Company>>({
+  const [selectedDocumentType, setSelectedDocumentType] = useState<Partial<DocumentType>>({
     name: "",
-    email: "",
-    phoneNumber: "",
+    description: "",
   });
-  const {register,handleSubmit,reset,formState: { errors },} = useForm<Company>()
+  const {register,handleSubmit,reset,formState: { errors },} = useForm<DocumentType>()
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false); 
-  const [companyIdToDelete, setCompanyIdToDelete] = useState<number | null>(null);
+  const [documentTypeToDelete, setDocumentTypeToDelete] = useState<number | null>(null);
 
-  const onSubmit: SubmitHandler<Company> = async (data) => {
+  const onSubmit: SubmitHandler<DocumentType> = async (data) => {
     console.log(data)
     try {
 
-        if (selectedCompany) {
-          if (selectedCompany.id) {
-           const updateObj = {...data, id: selectedCompany.id}
+        if (selectedDocumentType) {
+          if (selectedDocumentType.id) {
+           const updateObj = {...data, id: selectedDocumentType.id}
             await axios.put(
-              `${url}/Company/UpdateCompany?id=${selectedCompany.id}`,
+              `${url}/DocumentType/UpdateDocumentType?id=${selectedDocumentType.id}`,
               updateObj
             );
           } else {
             
             await axios.post(
-              `${url}/Company/RegisterCompany`,
+                `${url}/DocumentType/CreateDocumentType`,
               data
             );
           }
           reset();
           fetchCompanies();
           setOpenDialog(false);
-          setSelectedCompany({});
+          setSelectedDocumentType({});
           toast.success("Company saved successfully");
         }
       } catch (error) {
-        console.error("Error saving/editing company:", error);
-        toast.error("Error saving/editing company");
+        console.error("Error saving/editing documentType:", error);
+        toast.error("Error saving/editing documentType");
       }
 }
-
-
   useEffect(() => {
     fetchCompanies();
   }, []);
@@ -79,48 +75,48 @@ const Company: React.FC = () => {
   const fetchCompanies = async () => {
     try {
       const response = await axios.get(
-        `${url}/Company/GetAllCompany`
+        `${url}/DocumentType/GetAllDocumentType`
       );
-      setCompanies(response.data);
+      setDocumentTypes(response.data);
       console.log(response.data)
     } catch (error) {
-      console.error("Error fetching companies:", error);
+      console.error("Error fetching documentTypes:", error);
     }
   };
 
   const deleteCompany = async (id: number) => {
     try {
       await axios.delete(
-        `${url}/Company/DeleteCompany?id=${id}`
+        `${url}/DocumentType/DeleteDocumentType?id=${id}`
       );
       fetchCompanies();
-      toast.success("Company deleted successfully");
+      toast.success("documentType deleted successfully");
     } catch (error) {
-      console.error("Error deleting company:", error);
-      toast.error("Error deleting company");
+      console.error("Error deleting documentType:", error);
+      toast.error("Error deleting documentType");
     }
   };
 
   const handleConfirmDelete = (id: number) => {
-    setCompanyIdToDelete(id);
+    setDocumentTypeToDelete(id);
     setConfirmDeleteDialog(true);
   };
 
   const handleDelete = () => {
-    if (companyIdToDelete !== null) {
-      deleteCompany(companyIdToDelete);
-      setCompanyIdToDelete(null);
+    if (documentTypeToDelete !== null) {
+      deleteCompany(documentTypeToDelete);
+      setDocumentTypeToDelete(null);
       setConfirmDeleteDialog(false);
     }
   };
 
-  const handleEditCompany = (company: Company) => {
-    setSelectedCompany(company);
+  const handleEditCompany = (documentType: DocumentType) => {
+    setSelectedDocumentType(documentType);
     setOpenDialog(true);
   };
 
   const handleDialogClose = () => {
-    setSelectedCompany({});
+    setSelectedDocumentType({});
     setOpenDialog(false);
   };
 
@@ -141,25 +137,24 @@ const Company: React.FC = () => {
         
         onClick={() => setOpenDialog(true)}
       >
-        Create Company
+        Create DocumentType
       </Button>
 
       <Divider style={{ margin: "30px 0" }} />
 
       <Box sx={{ width: "100%", height: "calc(100% - 200px)" }}>
         <DataGrid
-          rows={Companies}
+          rows={documentType}
           autoHeight
           columns={[
             { field: "name", headerName: "Name", flex: 1 },
-            { field: "email", headerName: "Email", flex: 1 },
-            { field: "phoneNumber", headerName: "phoneNumber", flex: 1 },
+            { field: "description", headerName: "Description", flex: 1 },
 
             {
               field: "actions",
               headerName: "Actions",
               width: 300, 
-              renderCell: (params: { row: Company }) => (
+              renderCell: (params: { row: DocumentType }) => (
                 <>
                   <Button
                     variant="contained"
@@ -190,29 +185,22 @@ const Company: React.FC = () => {
         <DialogContent>
           <TextField
             label="Name"
-            defaultValue={selectedCompany?.name}
+            defaultValue={selectedDocumentType?.name}
             {...register("name")}
             fullWidth
             variant="outlined"
             margin="normal"
           />
           <TextField
-            label="Email"
-            type="email"
-            defaultValue={selectedCompany?.email}
-            {...register("email")}
+            label="Description"
+        
+            defaultValue={selectedDocumentType?.description}
+            {...register("description")}
             fullWidth
             variant="outlined"
             margin="normal"
           />
-          <TextField
-            label="Phone Number"    
-            {...register("phoneNumber")}
-            defaultValue={selectedCompany?.phoneNumber}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-          />
+   
         </DialogContent>
 
         <DialogActions>
@@ -248,4 +236,4 @@ const Company: React.FC = () => {
   );
 };
 
-export default Company;
+export default DocumentType;

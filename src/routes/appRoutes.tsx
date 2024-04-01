@@ -6,8 +6,10 @@ import DashboardIndex from "../pages/dashboard/DashboardIndex";
 import ChangelogPage from "../pages/changelog/ChangelogPage";
 import AnalyticsPage from "../pages/dashboard/AnalyticsPage";
 import SaasPage from "../pages/dashboard/SaasPage";
+import BrunchDiningIcon from '@mui/icons-material/BrunchDining';
 import ComponentPageLayout from "../pages/component/ComponentPageLayout";
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
@@ -15,9 +17,20 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import AlertPage from "../pages/component/AlertPage";
 import ButtonPage from "../pages/component/ButtonPage";
 import DocumentationPage from "../pages/documentation/DocumentationPage";
-
+import ManIcon from '@mui/icons-material/Man';
+import BusinessIcon from '@mui/icons-material/Business';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import Vehicle from "../pages/Vehicle/vehicle";
 import Chauffuer from "../pages/Chauffuer/chauffuer";
+import Company from "../pages/Company/company";
+import { pink } from "@mui/material/colors";
+import CompanyUser from "../pages/companyUser/companyUser";
+import AddHomeWorkIcon from '@mui/icons-material/AddHomeWork';
+import Amenity from "../pages/Aminity/aminity";
+import Logout from "../pages/Logout/logout";
+import LogoutIcon from '@mui/icons-material/Logout';
+import DocumentType from "../pages/DocumentType/doumentType";
+import SourceIcon from '@mui/icons-material/Source';
 
 const appRoutes: RouteType[] = [
   // {
@@ -42,83 +55,111 @@ const appRoutes: RouteType[] = [
       displayText: "Dashboard",
       icon: <DashboardOutlinedIcon />
     },
+  },
+  {
+    path: "/manage",
+    element: <ComponentPageLayout />,
+    state: "manage",
+    sidebarProps: {
+      displayText: "Manage",
+      icon: <AppsOutlinedIcon />
+    },
     child: [
       {
-        index: true,
-        element: <DashboardIndex />,
-        state: "dashboard.index"
-      },
-      {
-        path: "/dashboard/addvehicle",
-        element: <Vehicle/>,
-        state: "dashboard.addvehicle",
+        path: "/manage/addvehicle",
+        element: <Vehicle />,
+        state: "manage.addvehicle",
         sidebarProps: {
-          displayText: "Add Vehicle"
+          displayText: "Vehicle",
+          // icon: <DirectionsCarIcon fontSize="small"/>
+          
         },
       },
       {
-        path: "/dashboard/chauffuer",
+        path: "/manage/chauffuer",
         element: <Chauffuer />,
-        state: "dashboard.chauffuer",
+        state: "manage.chauffuer",
         sidebarProps: {
           displayText: "Chauffuer"
         }
       },
       {
-        path: "/dashboard/saas",
-        element: <SaasPage />,
-        state: "dashboard.saas",
+        path: "/manage/company",
+        element: <Company />,
+        state: "manage.company",
         sidebarProps: {
-          displayText: "Saas"
+          displayText: "company",
+
         }
-      }
-    ]
-  },
-  {
-    path: "/component",
-    element: <ComponentPageLayout />,
-    state: "component",
-    sidebarProps: {
-      displayText: "Components",
-      icon: <AppsOutlinedIcon />
-    },
-    child: [
-      {
-        path: "/component/alert",
-        element: <AlertPage />,
-        state: "component.alert",
-        sidebarProps: {
-          displayText: "Alert"
-        },
       },
-      {
-        path: "/component/button",
-        element: <ButtonPage />,
-        state: "component.button",
-        sidebarProps: {
-          displayText: "Button"
-        }
-      }
+
     ]
   },
   {
-    path: "/documentation",
-    element: <DocumentationPage />,
-    state: "documentation",
+    path: "/vehicle",
+    element: <Vehicle />,
+    state: "vehicle",
     sidebarProps: {
-      displayText: "Documentation",
-      icon: <ArticleOutlinedIcon />
+      displayText: "Vehicle",
+      icon: <DirectionsCarIcon />
     }
   },
   {
-    path: "/changelog",
-    element: <ChangelogPage />,
-    state: "changelog",
+    path: "/chauffuer",
+    element: <Chauffuer />,
+    state: "chauffuer",
     sidebarProps: {
-      displayText: "Changelog",
-      icon: <FormatListBulletedOutlinedIcon />
+      displayText: "Chauffuer",
+      icon: <ManIcon/>
     }
-  }
+  },
+  {
+    path: "/company",
+    element: <Company/>,
+    state: "company",
+    sidebarProps: {
+      displayText: "Company",
+      icon: <AddHomeWorkIcon/>
+    }
+  },
+  {
+    path: "/companyuser",
+    element: <CompanyUser/>,
+    state: "companyuser",
+    sidebarProps: {
+      displayText: "CompanyUser",
+      icon: <PersonAddAlt1Icon/>
+    }
+  },
+  {
+    path: "/aminity",
+    element: <Amenity/>,
+    state: "aminity",
+    sidebarProps: {
+      displayText: "Aminity",
+      icon: <BrunchDiningIcon/>
+    }
+  },
+  {
+    path: "/documenttype",
+    element: <DocumentType/>,
+    state: "documenttype",
+    sidebarProps: {
+      displayText: "documenttype",
+      icon: <SourceIcon/>
+    }
+  },
+  {
+    path: "/logout",
+    element: <Logout/>,
+    state: "logout",
+    sidebarProps: {
+      displayText: "Logout",
+      icon: <LogoutIcon/>
+    }
+  },
+  
+
 ];
 
 export default appRoutes;
