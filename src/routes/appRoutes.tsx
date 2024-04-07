@@ -31,6 +31,8 @@ import Logout from "../pages/Logout/logout";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DocumentType from "../pages/DocumentType/doumentType";
 import SourceIcon from '@mui/icons-material/Source';
+import UpdateProfile from "../pages/Profile/updateProfile";
+import Person2Icon from '@mui/icons-material/Person2';
 
 const appRoutes: RouteType[] = [
   // {
@@ -158,8 +160,15 @@ const appRoutes: RouteType[] = [
       icon: <LogoutIcon/>
     }
   },
-  
-
+  {
+    path: "/profile",
+    element: <UpdateProfile/>,
+    state: "profile",
+    sidebarProps: {
+      displayText: "profile",
+      icon: <Person2Icon/>
+    }
+  },
 ];
 
 export default appRoutes;

@@ -167,7 +167,7 @@ const Vehicle: React.FC = () => {
           reset();
           fetchVehicles();
           setOpenDialog(false);
-          //setSelectedVehicle({});
+          setSelectedVehicle({});
           toast.success("vehicle saved successfully");
         }
       } catch (error) {
@@ -279,7 +279,7 @@ const Vehicle: React.FC = () => {
         <DialogContent>
           <TextField
             label="Name"
-            value={selectedVehicle?.name}
+            defaultValue={selectedVehicle?.name}
             {...register("name")}
             fullWidth
             variant="outlined"

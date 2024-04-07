@@ -9,7 +9,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  ButtonGroup
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -20,6 +21,8 @@ import NoRowsSVG from '../../configs/GlobalStyles/NoRowsSVG';
 import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import url from '../../BackendUrl';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Chauffuer {
   id: number;
@@ -33,7 +36,7 @@ interface Chauffuer {
   workingHours?: string;
   regionId?: number;
   companyId?: number;
-
+  files?: File[];
 
 }
 
@@ -58,7 +61,7 @@ const Chauffuer: React.FC = () => {
   const {register,handleSubmit,reset,formState: { errors },} = useForm<Chauffuer>()
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false); 
   const [companyIdToDelete, setCompanyIdToDelete] = useState<number | null>(null);
-  
+
   const fetchChauffuers = async () => {
     try {
       const response = await axios.get('https://localhost:7202/api/Chauffeur/GetAllChauffeurs'); 
@@ -76,6 +79,16 @@ const Chauffuer: React.FC = () => {
   console.log(chauffuer);
   useEffect(() => {
   }, []);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string>('');
+  const handlePreviewClose = () => {
+    setPreviewDialogOpen(false);
+  };
+
+  const handlePreviewOpen = (image: string) => {
+    setPreviewImage(image);
+    setPreviewDialogOpen(true);
+  };
 
   const onSubmit: SubmitHandler<Chauffuer> = async (data) => {
     console.log(data)
@@ -143,6 +156,8 @@ const handleDialogClose = () => {
   setOpenDialog(false);
 };
 
+
+
   function CustomNoRowsOverlay() {
     return (
       <StyledGridOverlay>
@@ -179,29 +194,31 @@ const handleDialogClose = () => {
     { field: 'companyId', headerName: 'Company ID', flex: 1 },
     { field: 'regionId', headerName: 'Region ID', flex: 1 },
     
-    { field: 'availabilityStatus', headerName: 'Availability Status', flex: 1 },
+    { field: 'availabilityStatus', headerName: 'Availability', flex: 1 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 150,
+      width: 250,
       renderCell: (params: { row: Chauffuer }) => (
         <>
+        <ButtonGroup variant="contained" aria-label="Basic button group">
         <Button
-          variant="contained"
+          // variant="contained"
           color="secondary"
           onClick={() => handleConfirmDelete(params.row.id)}
-          style={{ marginRight: 10 }}
+          // style={{ marginRight: 10 }}
         >
-          Remove
+          <DeleteIcon/>
         </Button>
+  
         <Button
-        variant="contained"
-        color="primary"
+        // variant="contained"
+        // color="primary"
         onClick={() => handleEditCompany(params.row)}
       >
-        Edit
+        <EditIcon/>
       </Button>
-
+        </ButtonGroup>
       </>
       ),
     },
@@ -294,6 +311,7 @@ const handleDialogClose = () => {
             variant="outlined"
             margin="normal"
           />
+        
         </DialogContent>
 
         <DialogActions>
@@ -323,6 +341,13 @@ const handleDialogClose = () => {
             No
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog open={previewDialogOpen} onClose={handlePreviewClose}>
+        <DialogTitle>Image Preview</DialogTitle>
+        <DialogContent>
+          <img src={previewImage} alt="Preview" style={{ maxWidth: '100%' }} />
+        </DialogContent>
       </Dialog>
     </div>
   );
