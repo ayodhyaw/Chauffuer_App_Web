@@ -76,7 +76,7 @@ const ChauffuerImagesUpload: React.FC = () => {
     
 
     try {
-    await axios.post(`https://localhost:7202/api/Chauffeur/UploadImages2`, formData, 
+    await axios.post(`https://localhost:7202/api/Chauffeur/UploadImage?chauffuerId=${id}`, formData, 
       {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -141,11 +141,7 @@ const ChauffuerImagesUpload: React.FC = () => {
       handleDocumentUpload(id, file);
     }
   };
-  const handleDialogClose = () => {
-   
-    setOpenDialog(false);
-  };
-
+ 
   function CustomNoRowsOverlay() {
     return (
       <StyledGridOverlay>

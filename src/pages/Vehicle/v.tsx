@@ -10,6 +10,9 @@ import {
   DialogContent,
   DialogActions,
   MenuItem,
+  Grid,
+  Modal,
+  Paper,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -21,6 +24,7 @@ import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import url from "../../BackendUrl";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 interface Vehicle {
   id: number;
@@ -43,20 +47,26 @@ interface Vehicle {
     id: number;
   };
   companyId: number;
+  images: Image[];
 }
 
 interface AddAmenitiesFormData {
   quantity: number;
   availabilityStatus: boolean;
   vehicleId: number;
-  amenityIds: number[];
-  
+  amenityIds: number[]; 
 }
 
 interface Aminity {
   id: number;
   name: string;
 }
+
+interface Image {
+  id: number;
+  url: string;
+}
+
 const useStyles = makeStyles(vehicleConfig);
 
 const V: React.FC = () => {
@@ -65,7 +75,10 @@ const V: React.FC = () => {
   const [brands, setBrands] = useState<Vehicle[]>([]);
   const [amenities, setAmenities] = useState<Aminity[]>([]);
   const [vehicleType, setVhicleType] = useState<Vehicle[]>([]);
+  const [previewImage, setPreviewImage] = useState<string>("");
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [company, setCompany] = useState<Vehicle[]>([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState(0);
   const { register, handleSubmit, reset } = useForm<Vehicle>();
   const {
     register: registerAddAmenities,
@@ -98,6 +111,7 @@ const V: React.FC = () => {
     null
   );
   const [openDialog, setOpenDialog] = useState(false);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
 
   function CustomNoRowsOverlay() {
     return (
@@ -107,6 +121,45 @@ const V: React.FC = () => {
       </StyledGridOverlay>
     );
   }
+  //img upl
+  const handleImageUpload = async (id: number, image: File) => {
+    const formData = new FormData();
+    formData.append("image", image);
+    try {
+      await axios.post(
+        `https://localhost:7202/api/Chauffeur/UploadImage?vehicleId=${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+          },
+        }
+      );
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+    }
+  };
+  const openImageModal = (id: number) => {
+    setSelectedVehicleId(id);
+    setImageModalOpen(true);
+  };
+  const closeImageModal = () => {
+    setImageModalOpen(false);
+  };
+  const handleImageInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    console.log("id", id);
+    const file = event.target.files?.[0];
+    if (file) {
+      handleImageUpload(id, file);
+    }
+  };
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -386,6 +439,9 @@ const V: React.FC = () => {
                   >
                     Edit
                   </Button>
+                  <Button onClick={() => openImageModal(params.row.id)}>
+                      <AddPhotoAlternateIcon />
+                    </Button>
                 </>
               ),
             },
@@ -400,7 +456,7 @@ const V: React.FC = () => {
           <DialogContent>
             <TextField
               label="Name"
-              value={selectedVehicle?.name}
+              defaultValue={selectedVehicle?.name}
               {...register("name")}
               fullWidth
               variant="outlined"
@@ -582,6 +638,46 @@ const V: React.FC = () => {
       </Dialog>
 
       <ToastContainer />
+
+      <Dialog
+        open={previewDialogOpen}
+        onClose={() => setPreviewDialogOpen(false)}
+      >
+        <DialogTitle>Image Preview</DialogTitle>
+        <DialogContent>
+          <img src={previewImage} alt="Preview" style={{ maxWidth: "10%" }} />
+        </DialogContent>
+      </Dialog>
+      <Modal open={imageModalOpen} onClose={closeImageModal}>
+        <Paper className={classes.modalPaper}>
+          {" "}
+          {/* Apply custom styles using makeStyles */}
+          <Box p={2}>
+            <Typography variant="h6">Upload Image</Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    handleImageInputChange(event, selectedVehicleId)
+                  }
+                />
+              </Grid>
+              <Grid item xs={12}>
+                {/* Display previously uploaded images here */}
+                <img src="" alt="" />
+                <img
+                  src={
+                    "https://localhost:7202/Uploads/Docuemnts/Chauffuer/0897654321/0897654321-e56c6fc0-4e53-4387-9028-753a690c6fa0.jpg"
+                  }
+                  alt=""
+                ></img>
+              </Grid>
+            </Grid>
+          </Box>
+        </Paper>
+      </Modal>
     </div>
   );
 };

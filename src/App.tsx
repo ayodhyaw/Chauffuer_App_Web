@@ -9,6 +9,9 @@ import UpdateProfile from "./pages/Profile/updateProfile";
 import C from "./pages/Chauffuer/c";
 import ChauffuerImageUpload from "./pages/Chauffuer/chauffuerImageUpload";
 import V from "./pages/Vehicle/v";
+import Brand from "./pages/Brand/brand";
+import Region from "./pages/Region/region";
+import VehicleType from "./pages/VehicleType/vehicleType";
 
 
 function App() {
@@ -17,8 +20,10 @@ function App() {
       <Routes>
       <Route path="/" index element={<Login />} />
       <Route path="/b" index element={<V />} /> 
+      <Route path="/z" index element={<C />} /> 
       <Route path="/v" element={<ChauffuerImageUpload/>} /> 
       <Route path="/c" element={<UpdateProfile/>} />     
+      <Route path="/f" element={<VehicleType/>} />    
       <Route path="/" element={<MainLayout />}>
           {routes}
         </Route>

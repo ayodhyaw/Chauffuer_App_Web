@@ -33,6 +33,12 @@ import DocumentType from "../pages/DocumentType/doumentType";
 import SourceIcon from '@mui/icons-material/Source';
 import UpdateProfile from "../pages/Profile/updateProfile";
 import Person2Icon from '@mui/icons-material/Person2';
+import Brand from "../pages/Brand/brand";
+import ToysIcon from '@mui/icons-material/Toys';
+import Region from "../pages/Region/region";
+import SouthAmericaIcon from '@mui/icons-material/SouthAmerica';
+import VehicleType from "../pages/VehicleType/vehicleType";
+import TimeToLeaveOutlinedIcon from '@mui/icons-material/TimeToLeaveOutlined';
 
 const appRoutes: RouteType[] = [
   // {
@@ -152,12 +158,30 @@ const appRoutes: RouteType[] = [
     }
   },
   {
-    path: "/logout",
-    element: <Logout/>,
-    state: "logout",
+    path: "/brand",
+    element: <Brand/>,
+    state: "brand",
     sidebarProps: {
-      displayText: "Logout",
-      icon: <LogoutIcon/>
+      displayText: "Brand",
+      icon: <ToysIcon/>
+    }
+  },
+  {
+    path: "/region",
+    element: <Region/>,
+    state: "region",
+    sidebarProps: {
+      displayText: "Region",
+      icon: <SouthAmericaIcon/>
+    }
+  },
+  {
+    path: "/vehicleType",
+    element: <VehicleType/>,
+    state: "vehicleType",
+    sidebarProps: {
+      displayText: "VehicleType",
+      icon: <TimeToLeaveOutlinedIcon/>
     }
   },
   {
@@ -167,6 +191,15 @@ const appRoutes: RouteType[] = [
     sidebarProps: {
       displayText: "profile",
       icon: <Person2Icon/>
+    }
+  },
+  {
+    path: "/logout",
+    element: <Logout/>,
+    state: "logout",
+    sidebarProps: {
+      displayText: "Logout",
+      icon: <LogoutIcon/>
     }
   },
 ];
