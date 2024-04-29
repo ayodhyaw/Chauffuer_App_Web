@@ -38,9 +38,9 @@ const useStyles = makeStyles({
   },
   form: {
     textAlign: 'center',
-    maxWidth: '600px', // Adjust the width as needed
+    maxWidth: '600px', 
     padding: '30px',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Adjust the opacity as needed
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
     borderRadius: '8px',
   },
 });
@@ -52,14 +52,9 @@ const UpdateProfile: React.FC = () => {
     id: 0,
     firstName: '',
     lastName: '',
-    phoneNumber: '',
     email: '',
-    password: '',
-    gender: 0,
-    role: 0,
-    chauffuerId: 0,
-    passengerId: 0,
-    companyUserId: 0
+    // gender: 0,
+
   });
 
   useEffect(() => {
@@ -71,7 +66,7 @@ const UpdateProfile: React.FC = () => {
   }, []);
 
   const handleUpdateProfile = () => {
-    axios.put(`${url}/updateProfile/${selectedProfile.id}`, selectedProfile)
+    axios.put(`${url}/Auth/UpdateUser?id=${selectedProfile.id}`, selectedProfile)
       .then(response => {
         console.log(response.data); // Assuming the response contains updated user details
         toast.success('Profile updated successfully');
@@ -104,13 +99,6 @@ const UpdateProfile: React.FC = () => {
           label="Email"
           value={selectedProfile.email}
           onChange={e => setSelectedProfile({ ...selectedProfile, email: e.target.value })}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Phone Number"
-          value={selectedProfile.phoneNumber}
-          onChange={e => setSelectedProfile({ ...selectedProfile, phoneNumber: e.target.value })}
           fullWidth
           margin="normal"
         />

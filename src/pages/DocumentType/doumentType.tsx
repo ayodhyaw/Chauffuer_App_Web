@@ -11,13 +11,13 @@ import {
   DialogActions,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import axios from "axios";
 import { vehicleConfig } from "../../configs/vehicleConfig";
 import { DataGrid } from "@mui/x-data-grid";
 import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form"
-import url from "../../BackendUrl";
+
+import agent from "../../api/agent";
 
 interface DocumentType {
   id: number;
@@ -46,19 +46,14 @@ const DocumentType: React.FC = () => {
         if (selectedDocumentType) {
           if (selectedDocumentType.id) {
            const updateObj = {...data, id: selectedDocumentType.id}
-            await axios.put(
-              `${url}/DocumentType/UpdateDocumentType?id=${selectedDocumentType.id}`,
-              updateObj
-            );
+         await agent.DocumentType.updateDocumentType(updateObj);
           } else {
             
-            await axios.post(
-                `${url}/DocumentType/CreateDocumentType`,
-              data
-            );
+           await agent.DocumentType.createDocumentType(data);
+           
           }
           reset();
-          fetchCompanies();
+          await fetchCompanies();
           setOpenDialog(false);
           setSelectedDocumentType({});
           toast.success("Company saved successfully");
@@ -74,11 +69,7 @@ const DocumentType: React.FC = () => {
 
   const fetchCompanies = async () => {
     try {
-      const response = await axios.get(
-        `${url}/DocumentType/GetAllDocumentType`
-      );
-      setDocumentTypes(response.data);
-      console.log(response.data)
+     await agent.DocumentType.GetALlDocumentType()
     } catch (error) {
       console.error("Error fetching documentTypes:", error);
     }
@@ -86,9 +77,7 @@ const DocumentType: React.FC = () => {
 
   const deleteCompany = async (id: number) => {
     try {
-      await axios.delete(
-        `${url}/DocumentType/DeleteDocumentType?id=${id}`
-      );
+      await agent.DocumentType.deleteDocumentType(id);
       fetchCompanies();
       toast.success("documentType deleted successfully");
     } catch (error) {
@@ -149,7 +138,6 @@ const DocumentType: React.FC = () => {
           columns={[
             { field: "name", headerName: "Name", flex: 1 },
             { field: "description", headerName: "Description", flex: 1 },
-
             {
               field: "actions",
               headerName: "Actions",

@@ -11,13 +11,12 @@ import {
   DialogActions,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import axios from "axios";
 import { vehicleConfig } from "../../configs/vehicleConfig";
 import { DataGrid } from "@mui/x-data-grid";
 import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form"
-import url from "../../BackendUrl";
+import agent from "../../api/agent";
 
 interface Brand {
   id: number;
@@ -47,19 +46,13 @@ const Brand: React.FC = () => {
         if (selectedBrand) {
           if (selectedBrand.id) {
            const updateObj = {...data, id: selectedBrand.id}
-            await axios.put(
-              `${url}/Brand/UpdateBrand?id=${selectedBrand.id}`,
-              updateObj
-            );
+            await agent.Brand.updateDBrand(updateObj)
           } else {
             
-            await axios.post(
-              `${url}/Brand/CreateBrand`,
-              data
-            );
+            await agent.Brand.createBrand(data);
           }
           reset();
-          fetchCompanies();
+          await fetchBrands();
           setOpenDialog(false);
           setSelectedBrand({});
           toast.success("Brand saved successfully");
@@ -72,27 +65,31 @@ const Brand: React.FC = () => {
 
 
   useEffect(() => {
-    fetchCompanies();
+    fetchBrands();
   }, []);
 
-  const fetchCompanies = async () => {
+  // const fetchCompanies = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${url}/Brand/GetAllBrands`
+  //     );
+  //     setBrands(response.data);
+  //     console.log(response.data)
+  //   } catch (error) {
+  //     console.error("Error fetching Brands:", error);
+  //   }
+  // };
+  const fetchBrands = async () => {
     try {
-      const response = await axios.get(
-        `${url}/Brand/GetAllBrands`
-      );
-      setBrands(response.data);
-      console.log(response.data)
+     await agent.Brand.GetALlBrand().then((respond) => setBrands(respond))
     } catch (error) {
       console.error("Error fetching Brands:", error);
     }
   };
-
-  const deleteCompany = async (id: number) => {
+  const deleteBrand = async (id: number) => {
     try {
-      await axios.delete(
-        `${url}/Brand/Deletebrand?id=${id}`
-      );
-      fetchCompanies();
+      await agent.Brand.deleteBrand(id)
+      fetchBrands();
       toast.success("Brand deleted successfully");
     } catch (error) {
       console.error("Error deleting Brand:", error);
@@ -107,14 +104,14 @@ const Brand: React.FC = () => {
 
   const handleDelete = () => {
     if (brandToDelete !== null) {
-      deleteCompany(brandToDelete);
+      deleteBrand(brandToDelete);
       setBrandToDelete(null);
       setConfirmDeleteDialog(false);
     }
   };
 
-  const handleEditCompany = (company: Brand) => {
-    setSelectedBrand(company);
+  const handleEditBrand = (brand: Brand) => {
+    setSelectedBrand(brand);
     setOpenDialog(true);
   };
 
@@ -137,14 +134,11 @@ const Brand: React.FC = () => {
       <Button
         variant="contained"
         color="primary"
-        
         onClick={() => setOpenDialog(true)}
       >
         Create Region
       </Button>
-
       <Divider style={{ margin: "30px 0" }} />
-
       <Box sx={{ width: "100%", height: "calc(100% - 200px)" }}>
         <DataGrid
           rows={brands}
@@ -152,8 +146,6 @@ const Brand: React.FC = () => {
           columns={[
             { field: "name", headerName: "Name", flex: 1 },
             { field: "description", headerName: "Description", flex: 1 },
-           
-
             {
               field: "actions",
               headerName: "Actions",
@@ -171,7 +163,7 @@ const Brand: React.FC = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleEditCompany(params.row)}
+                    onClick={() => handleEditBrand(params.row)}
                   >
                     Edit
                   </Button>
@@ -189,6 +181,7 @@ const Brand: React.FC = () => {
         <DialogContent>
           <TextField
             label="Name"
+            type="text"
             defaultValue={selectedBrand?.name}
             {...register("name")}
             fullWidth

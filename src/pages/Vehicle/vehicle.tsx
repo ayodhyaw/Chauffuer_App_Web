@@ -21,6 +21,11 @@ import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import url from "../../BackendUrl";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import agent from "../../api/agent";
+import { CompanyDto } from "../../interfaces/CompanyDto";
+import { BrandDto } from "../../interfaces/BrandDto";
+import { VehicleTypeDto } from "../../interfaces/VehicleTypeDto";
+import { VehicleAminitiesDto } from "../../interfaces/VehicleAminitiesDto";
 
 interface Vehicle {
   id: number;
@@ -50,7 +55,6 @@ interface AddAmenitiesFormData {
   availabilityStatus: boolean;
   vehicleId: number;
   amenityIds: number[];
-  
 }
 
 interface Aminity {
@@ -62,15 +66,16 @@ const useStyles = makeStyles(vehicleConfig);
 const Vehicle: React.FC = () => {
   const classes = useStyles();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [brands, setBrands] = useState<Vehicle[]>([]);
+  const [brands, setBrands] = useState<BrandDto[]>([]);
   const [amenities, setAmenities] = useState<Aminity[]>([]);
-  const [vehicleType, setVhicleType] = useState<Vehicle[]>([]);
+  const [vehicleType, setVhicleType] = useState<VehicleTypeDto[]>([]);
   const [company, setCompany] = useState<Vehicle[]>([]);
+  const [companies, setCompanies] = useState<CompanyDto[]>([]);
   const { register, handleSubmit, reset } = useForm<Vehicle>();
   const {
     register: registerAddAmenities,
     handleSubmit: handleSubmitAddAmenities,
-  } = useForm<AddAmenitiesFormData>();
+  } = useForm<VehicleAminitiesDto>();
 
   const [selectedVehicle, setSelectedVehicle] = useState<Partial<Vehicle>>({
     name: "",
@@ -94,7 +99,7 @@ const Vehicle: React.FC = () => {
     },
   });
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
-  const [companyIdToDelete, setCompanyIdToDelete] = useState<number | null>(
+  const [vehicleIdToDelete, setVehicleIdToDelete] = useState<number | null>(
     null
   );
   const [openDialog, setOpenDialog] = useState(false);
@@ -109,26 +114,11 @@ const Vehicle: React.FC = () => {
   }
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const response = await axios.get(`${url}/Brand/GetAllBrands`);
-        setBrands(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching brands:", error);
-      }
-    };
-    fetchBrands();
-  }, []);
-
-  useEffect(() => {
     const fetchVehicleType = async () => {
       try {
-        const response = await axios.get(
-          `${url}/VehicleType/GetAllVehicleType`
+        await agent.VehicleType.GetALlVehicleType().then((response) =>
+          setVhicleType(response)
         );
-        setVhicleType(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching vehicleType:", error);
       }
@@ -139,9 +129,11 @@ const Vehicle: React.FC = () => {
   useEffect(() => {
     const fetchCompany = async () => {
       try {
-        const response = await axios.get(`${url}/Company/GetAllCompany`);
-        setCompany(response.data);
-        console.log(response.data);
+        // const response = await axios.get(`${url}/Company/GetAllCompany`);
+        // setCompany(response.data);
+        await agent.Company.GetALlCompany().then((response) =>
+          setCompanies(response)
+        );
       } catch (error) {
         console.error(" fetching Company:", error);
       }
@@ -149,11 +141,25 @@ const Vehicle: React.FC = () => {
     fetchCompany();
   }, []);
 
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        // const response = await axios.get(`${url}/Brand/GetAllBrands`);
+        // setBrands(response.data);
+        // console.log(response.data);
+        await agent.Brand.GetALlBrand().then((response) => setBrands(response));
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+    fetchBrands();
+  }, []);
+
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get(`${url}/Vehicle/GetAllVehicles`);
-      setVehicles(response.data);
-      console.log(response.data);
+      await agent.Vehicle.GetALlVehicle().then((response) =>
+        setVehicles(response)
+      );
     } catch (error) {
       console.error("Error fetching vehicles:", error);
     }
@@ -175,10 +181,7 @@ const Vehicle: React.FC = () => {
             vehicleTypeId: data.vehicleType.id,
             companyId: data.company.id,
           };
-          await axios.put(
-            `${url}/Vehicle/UpdateVehicle?id=${selectedVehicle.id}`,
-            updateObj
-          );
+          await agent.Vehicle.updateVehicle(updateObj);
         } else {
           const saveObj = {
             ...data,
@@ -186,13 +189,10 @@ const Vehicle: React.FC = () => {
             vehicleTypeId: data.vehicleType.id,
             companyId: data.company.id,
           };
-          await axios.post(
-            "https://localhost:7202/api/Vehicle/CreateVehicle",
-            saveObj
-          );
+          await agent.Vehicle.createVehicle(saveObj);
         }
         reset();
-        fetchVehicles();
+        await fetchVehicles();
         setOpenDialog(false);
         //setSelectedVehicle({});
         toast.success("vehicle saved successfully");
@@ -209,22 +209,22 @@ const Vehicle: React.FC = () => {
   };
 
   const handleConfirmDelete = (id: number) => {
-    setCompanyIdToDelete(id);
+    setVehicleIdToDelete(id);
     setConfirmDeleteDialog(true);
   };
 
   const handleDelete = () => {
-    if (companyIdToDelete !== null) {
-      deleteVehicle(companyIdToDelete);
-      setCompanyIdToDelete(null);
+    if (vehicleIdToDelete !== null) {
+      deleteVehicle(vehicleIdToDelete);
+      setVehicleIdToDelete(null);
       setConfirmDeleteDialog(false);
     }
   };
 
   const deleteVehicle = async (id: number) => {
     try {
-      await axios.delete(`${url}/Vehicle/DeleteVehicle?id=${id}`);
-      fetchVehicles();
+      await agent.Vehicle.deleteVehicle(id);
+      await fetchVehicles();
       toast.success("Vehicle deleted successfully");
     } catch (error) {
       console.error("Error deleting Vehicle:", error);
@@ -232,7 +232,7 @@ const Vehicle: React.FC = () => {
     }
   };
 
-  const handleEditCompany = (vehicle: Vehicle) => {
+  const handleEditVehicle = (vehicle: Vehicle) => {
     console.log(vehicle);
 
     setOpenDialog(true);
@@ -246,16 +246,16 @@ const Vehicle: React.FC = () => {
     setOpenAddAmenitiesDialog(true);
   };
   // const handleAddAmenitiesSubmit = async (data: any) => {
-  //   try {  
+  //   try {
   //     console.log(data)
   //     // Make an API call to add amenities to the vehicle
 
   //     const response = await axios.post(
   //       "https://localhost:7202/api/Vehicle/AddAmenitiesToVehicle",
   //       data
-        
+
   //     );
-    
+
   //     // Handle the response as needed
   //     console.log("Amenities added to vehicle:", response.data);
   //     toast.success("Amenities added to vehicle successfully");
@@ -268,24 +268,16 @@ const Vehicle: React.FC = () => {
   //   }
   // };
 
-  const AminitySubmit: SubmitHandler<AddAmenitiesFormData> = async (data) => {
+  const AminitySubmit: SubmitHandler<VehicleAminitiesDto> = async (data) => {
     console.log(data);
-    try {  
-      console.log(data)
-    
-      const postData = {...data,amenityIds:[data.amenityIds]}
-      console.log(postData)
-      const response = await axios.post(
-        "https://localhost:7202/api/Vehicle/AddAmenitiesToVehicle",
-        postData
-        
-      );
-    
-    
-      console.log("Amenities added to vehicle:", response.data);
+    try {
+      console.log(data);
+
+      const postData = { ...data, amenityIds: [Number(data.amenityIds)] };
+      console.log(postData);
+      await agent.Vehicle.AddAminitiesToVehicle(postData).then();
       toast.success("Amenities added to vehicle successfully");
 
-    
       setOpenAddAmenitiesDialog(false);
     } catch (error) {
       console.error("Error adding amenities to vehicle:", error);
@@ -305,8 +297,7 @@ const Vehicle: React.FC = () => {
     };
     fetchAmenities();
   }, []);
-  
- 
+
   return (
     <div className={classes.root}>
       <Typography variant="h5" align="center" gutterBottom>
@@ -382,7 +373,7 @@ const Vehicle: React.FC = () => {
                     variant="contained"
                     color="primary"
                     // onClick={() => handleEdit(params.row)}
-                    onClick={() => handleEditCompany(params.row)}
+                    onClick={() => handleEditVehicle(params.row)}
                   >
                     Edit
                   </Button>
@@ -400,6 +391,7 @@ const Vehicle: React.FC = () => {
           <DialogContent>
             <TextField
               label="Name"
+              type="text"
               defaultValue={selectedVehicle?.name}
               {...register("name")}
               fullWidth
@@ -409,6 +401,7 @@ const Vehicle: React.FC = () => {
 
             <TextField
               label="Seating Capacity"
+              type="number"
               defaultValue={selectedVehicle?.seatingCapacity}
               {...register("seatingCapacity")}
               fullWidth
@@ -423,12 +416,14 @@ const Vehicle: React.FC = () => {
             />
             <TextField
               label="Cost Per Km"
+              type="number"
               defaultValue={selectedVehicle?.costPerKm}
               {...register("costPerKm")}
               sx={{ marginBottom: "20px" }}
             />
             <TextField
               label="Cost Per Hour"
+              type="number"
               defaultValue={selectedVehicle?.costPerHour}
               {...register("costPerHour")}
               fullWidth
@@ -436,6 +431,7 @@ const Vehicle: React.FC = () => {
             />
             <TextField
               label="Cost Per Day"
+              type="number"
               defaultValue={selectedVehicle?.costPerDay}
               {...register("costPerDay")}
               fullWidth
@@ -449,7 +445,7 @@ const Vehicle: React.FC = () => {
               fullWidth
               sx={{ marginBottom: "20px" }}
             >
-              {company.map((company) => (
+              {companies.map((company) => (
                 <MenuItem key={company.id} value={company.id}>
                   {company.name}
                 </MenuItem>
@@ -521,29 +517,29 @@ const Vehicle: React.FC = () => {
       >
         <DialogTitle>Add Amenities to Vehicle</DialogTitle>
         <form onSubmit={handleSubmitAddAmenities(AminitySubmit)}>
-        <DialogContent>
-          <TextField
-            label="Quantity"
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            {...registerAddAmenities("quantity")}
-          />
-          <TextField
-            label="Availability Status"
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            {...registerAddAmenities("availabilityStatus")}
-          />
-          <TextField
-            label="Vehicle ID"
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            {...registerAddAmenities("vehicleId")}
-          />
-          {/* <TextField
+          <DialogContent>
+            <TextField
+              label="Quantity"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              {...registerAddAmenities("quantity")}
+            />
+            <TextField
+              label="Availability Status"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              {...registerAddAmenities("availabilityStatus")}
+            />
+            <TextField
+              label="Vehicle ID"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              {...registerAddAmenities("vehicleId")}
+            />
+            {/* <TextField
             label="Amenity IDs"
             fullWidth
             variant="outlined"
@@ -551,34 +547,33 @@ const Vehicle: React.FC = () => {
             {...registerAddAmenities("amenityIds")}
           />
    */}
-    <TextField
-    select
-    label="Amenity"
-    fullWidth
-    variant="outlined"
-    margin="normal"
-    {...registerAddAmenities("amenityIds")}
-  >
-    {amenities.map((amenity) => (
-      <MenuItem key={amenity?.id} value={amenity.id}>
-        {amenity.name}
-      </MenuItem>
-    ))}
-  </TextField>
-        
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="primary"
-            onClick={() => setOpenAddAmenitiesDialog(false)}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" color="primary" >
-            Add Amenities
-          </Button>
-        </DialogActions>
-</form>
+            <TextField
+              select
+              label="Amenity"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              {...registerAddAmenities("amenityIds")}
+            >
+              {amenities.map((amenity) => (
+                <MenuItem key={amenity?.id} value={amenity.id}>
+                  {amenity.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="primary"
+              onClick={() => setOpenAddAmenitiesDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" color="primary">
+              Add Amenities
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
 
       <ToastContainer />

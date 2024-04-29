@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
+
 import { ToastContainer, toast } from "react-toastify";
 import {
   Button,
@@ -9,7 +10,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem, // Import MenuItem for select field
+  MenuItem, 
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import axios from "axios";
@@ -19,56 +20,58 @@ import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form";
 import url from "../../BackendUrl";
+import agent from "../../api/agent";
+import { Amenitydto } from "../../interfaces/AminityDto";
+import { AmenityType } from "../../enum/amenityType";
 
-interface Amenity {
-  id: number;
-  name: string;
-  amenityType: AmenityType;
-  price: string;
-}
+// interface Amenity {
+//   id: number;
+//   name: string;
+//   amenityType: AmenityType;
+//   price: string;
+// }
 
-enum AmenityType {
-  Champagne = "Champagne",
-  Snacks = "Snacks",
-  Beer = "Beer",
-}
+// enum AmenityType {
+//   Champagne = "Champagne",
+//   Snacks = "Snacks",
+//   Beer = "Beer",
+// }
 
 const useStyles = makeStyles(vehicleConfig);
 
 const Amenity: React.FC = () => {
   const classes = useStyles();
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [amenities, setAmenities] = useState<Amenitydto[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedAmenity, setSelectedAmenity] = useState<Partial<Amenity>>({
+  const [selectedAmenity, setSelectedAmenity] = useState<Partial<Amenitydto>>({
     name: "",
     amenityType: AmenityType.Champagne,
     price: "",
   });
-  const { register, handleSubmit, reset } = useForm<Amenity>();
+  const { register, handleSubmit, reset, formState: { errors }, trigger } = useForm<Amenitydto>();
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
   const [amenityToDelete, setAmenityToDelete] = useState<number | null>(null);
 
-  const onSubmit: SubmitHandler<Amenity> = async (data) => {
+  const onSubmit: SubmitHandler<Amenitydto> = async (data) => {
     try {
       const amenityData = {
         ...data,
       };
 
       if (selectedAmenity) {
+
         if (selectedAmenity.id) {
           const updateObj = { ...amenityData, id: selectedAmenity.id };
-          await axios.put(
-            `${url}/Amenities/UpdateAmenitiese?id=${selectedAmenity.id}`,
-            updateObj
-          );
+          await agent.Aminity.updateAminity(updateObj);
         } else {
           const postData = {
             ...amenityData,
           };
-          await axios.post(`${url}/Amenities/CreateAmenities/`, postData);
+          // await axios.post(`${url}/Amenities/CreateAmenities`, postData);
+          await agent.Aminity.createAminity(postData);
         }
         reset();
-        fetchAmenities();
+        await fetchAmenities();
         setOpenDialog(false);
         setSelectedAmenity({});
         toast.success("Amenity saved successfully");
@@ -85,8 +88,9 @@ const Amenity: React.FC = () => {
 
   const fetchAmenities = async () => {
     try {
-      const response = await axios.get(`${url}/Amenities/GetAllAmenities`);
-      setAmenities(response.data);
+      // const response = await axios.get(`${url}/Amenities/GetAllAmenities`);
+      // setAmenities(response.data);
+      await agent.Aminity.GetALlAminity().then((response) => setAmenities(response))
     } catch (error) {
       console.error("Error fetching amenities:", error);
       toast.error("Error fetching amenities");
@@ -95,7 +99,7 @@ const Amenity: React.FC = () => {
 
   const deleteAmenity = async (id: number) => {
     try {
-      await axios.delete(`${url}/Amenities/DeleteAmenitiese?id=${id}`);
+      await agent.Aminity.deleteAminity(id)
       fetchAmenities();
       toast.success("Amenity deleted successfully");
     } catch (error) {
@@ -117,7 +121,7 @@ const Amenity: React.FC = () => {
     }
   };
 
-  const handleEditAmenity = (amenity: Amenity) => {
+  const handleEditAmenity = (amenity: Amenitydto) => {
     setSelectedAmenity(amenity);
     setOpenDialog(true);
   };
@@ -154,13 +158,18 @@ const Amenity: React.FC = () => {
           autoHeight
           columns={[
             { field: "name", headerName: "Name", flex: 1 },
-            { field: "amenityType", headerName: "Amenity Type", flex: 1, renderCell: (params) => params.value }, 
-            { field: "price", headerName: "Price", flex: 1 }, 
+            {
+              field: "amenityType",
+              headerName: "amenityType",
+              flex: 1,
+              renderCell: (params) => params.value,
+            },
+            { field: "price", headerName: "Price", flex: 1 },
             {
               field: "actions",
               headerName: "Actions",
               width: 300,
-              renderCell: (params: { row: Amenity }) => (
+              renderCell: (params: { row: Amenitydto }) => (
                 <>
                   <Button
                     variant="contained"
@@ -186,16 +195,29 @@ const Amenity: React.FC = () => {
       </Box>
 
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>{selectedAmenity.id ? "Edit Amenity" : "Create Amenity"}</DialogTitle>
+        <DialogTitle>
+          {selectedAmenity.id ? "Edit Amenity" : "Create Amenity"}
+        </DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
             <TextField
               label="Name"
+              type="text"
               defaultValue={selectedAmenity.name}
               {...register("name")}
               fullWidth
               variant="outlined"
               margin="normal"
+              error={!!errors.name}
+              helperText={errors.name ? errors.name.message : ""}
+              onFocus={() => {
+                
+                trigger("name");
+              }}
+              onChange={() => {
+                
+                trigger("name");
+              }}
             />
             <TextField
               select
@@ -214,6 +236,7 @@ const Amenity: React.FC = () => {
             </TextField>
             <TextField
               label="Price"
+              type="number"
               defaultValue={selectedAmenity.price}
               {...register("price")}
               fullWidth

@@ -29,7 +29,10 @@ interface CompanyUser {
   city: string;
   password: string;
   gender: string;
-  CompanyId: number;
+  company: {
+    name: string;
+    id: number;
+  };
 }
 
 const useStyles = makeStyles(vehicleConfig);
@@ -49,7 +52,10 @@ const CompanyUser: React.FC = () => {
     city: "",
     password: "",
     gender: "",
-    CompanyId: undefined,
+    company: {
+      name: "",
+      id: 0,
+    },
   });
 
   useEffect(() => {
@@ -178,7 +184,12 @@ const CompanyUser: React.FC = () => {
             { field: "address", headerName: "address", flex: 1 },
             { field: "address", headerName: "address", flex: 1 },
             { field: "gender", headerName: "gender", flex: 1 },
-            { field: "CompanyId", headerName: "CompanyId", flex: 1 },
+            {
+              field: "company",
+              headerName: "Company Name",
+              flex: 1,
+              valueGetter: (params) => params.row.company.name,
+            },
             {
               field: "actions",
               headerName: "Actions",
@@ -285,9 +296,9 @@ const CompanyUser: React.FC = () => {
             margin="normal"
           />
           <TextField
-            label="CompanyId"
-            name="CompanyId"
-            defaultValue={selectedCompanyUser?.CompanyId}
+            label="Company"
+            name="Company"
+            defaultValue={selectedCompanyUser?.company?.name}
             onChange={handleInputChange}
             fullWidth
             variant="outlined"

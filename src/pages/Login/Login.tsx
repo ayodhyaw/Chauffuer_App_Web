@@ -19,7 +19,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import loginConfigs from '../../configs/loginConfigs';
 
-// TODO remove, this demo shouldn't need to reset the theme.
+
 const defaultTheme = createTheme();
 
 export default function Login() {
@@ -31,7 +31,6 @@ export default function Login() {
     authhandle();
   };
   
-
   const authhandle = () => {
     axios.post(
       "https://localhost:7202/api/Auth/Login",
@@ -51,9 +50,11 @@ export default function Login() {
           localStorage.setItem('user', JSON.stringify(res.data.loginResponse.id));
           localStorage.setItem('userDetails', JSON.stringify(res.data.loginResponse));
           console.log("userDetails",res?.data?.loginResponse)
+
           //if (res.data.loginResponse.user.phoneNumber === '+94770068936') {
             //navigate("/");
           //} else {
+            
             navigate("/dashboard");
           //}
           toast.success('Login Successful');

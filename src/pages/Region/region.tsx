@@ -18,6 +18,7 @@ import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form"
 import url from "../../BackendUrl";
+import agent from "../../api/agent";
 
 interface Region {
   id: number;
@@ -50,19 +51,13 @@ const Region: React.FC = () => {
         if (selectedRegion) {
           if (selectedRegion.id) {
            const updateObj = {...data, id: selectedRegion.id}
-            await axios.put(
-              `${url}/Region/UpdateRegion?id=${selectedRegion.id}`,
-              updateObj
-            );
+           await agent.Region.updateRegion(updateObj);
           } else {
             
-            await axios.post(
-              `${url}/Region/CreateRegion`,
-              data
-            );
+           await agent.Region.createRegion(data);
           }
           reset();
-          fetchCompanies();
+         await fetchRegion();
           setOpenDialog(false);
           setSelectedRegion({});
           toast.success("Region saved successfully");
@@ -75,27 +70,20 @@ const Region: React.FC = () => {
 
 
   useEffect(() => {
-    fetchCompanies();
+    fetchRegion();
   }, []);
 
-  const fetchCompanies = async () => {
+  const fetchRegion = async () => {
     try {
-      const response = await axios.get(
-        `${url}/Region/GetAllRegion`
-      );
-      setRegions(response.data);
-      console.log(response.data)
+      await agent.Region.GetALlRegion().then((response) =>setRegions(response));
     } catch (error) {
       console.error("Error fetching Regions:", error);
     }
   };
-
-  const deleteCompany = async (id: number) => {
+  const deleteRegion = async (id: number) => {
     try {
-      await axios.delete(
-        `${url}/Region/DeleteRegion?id=${id}`
-      );
-      fetchCompanies();
+      await agent.Region.deleteRegion(id);
+      fetchRegion();
       toast.success("Region deleted successfully");
     } catch (error) {
       console.error("Error deleting Region:", error);
@@ -110,14 +98,14 @@ const Region: React.FC = () => {
 
   const handleDelete = () => {
     if (RegionToDelete !== null) {
-      deleteCompany(RegionToDelete);
+      deleteRegion(RegionToDelete);
       setRegionToDelete(null);
       setConfirmDeleteDialog(false);
     }
   };
 
-  const handleEditCompany = (brand: Region) => {
-    setSelectedRegion(brand);
+  const handleEditCompany = (region: Region) => {
+    setSelectedRegion(region);
     setOpenDialog(true);
   };
 

@@ -18,6 +18,7 @@ import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form"
 import url from "../../BackendUrl";
+import agent from "../../api/agent";
 
 interface Company {
   id: number;
@@ -48,16 +49,9 @@ const Company: React.FC = () => {
         if (selectedCompany) {
           if (selectedCompany.id) {
            const updateObj = {...data, id: selectedCompany.id}
-            await axios.put(
-              `${url}/Company/UpdateCompany?id=${selectedCompany.id}`,
-              updateObj
-            );
+           await agent.Company.updateCompany(updateObj);
           } else {
-            
-            await axios.post(
-              `${url}/Company/RegisterCompany`,
-              data
-            );
+            await agent.Company.createCompany(data);
           }
           reset();
           fetchCompanies();
@@ -76,13 +70,21 @@ const Company: React.FC = () => {
     fetchCompanies();
   }, []);
 
+  // const fetchCompanies = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${url}/Company/GetAllCompany`
+  //     );
+  //     setCompanies(response.data);
+  //     console.log(response.data)
+  //   } catch (error) {
+  //     console.error("Error fetching companies:", error);
+  //   }
+  // };
+
   const fetchCompanies = async () => {
     try {
-      const response = await axios.get(
-        `${url}/Company/GetAllCompany`
-      );
-      setCompanies(response.data);
-      console.log(response.data)
+     await agent.Company.GetALlCompany().then((response) => setCompanies(response))
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -90,9 +92,7 @@ const Company: React.FC = () => {
 
   const deleteCompany = async (id: number) => {
     try {
-      await axios.delete(
-        `${url}/Company/DeleteCompany?id=${id}`
-      );
+      await agent.Company.deleteCompany(id);
       fetchCompanies();
       toast.success("Company deleted successfully");
     } catch (error) {
@@ -190,6 +190,7 @@ const Company: React.FC = () => {
         <DialogContent>
           <TextField
             label="Name"
+            type="text"
             defaultValue={selectedCompany?.name}
             {...register("name")}
             fullWidth
@@ -207,6 +208,7 @@ const Company: React.FC = () => {
           />
           <TextField
             label="Phone Number"    
+            type="number"
             {...register("phoneNumber")}
             defaultValue={selectedCompany?.phoneNumber}
             fullWidth

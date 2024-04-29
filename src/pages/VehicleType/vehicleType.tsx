@@ -11,20 +11,18 @@ import {
   DialogActions,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import axios from "axios";
 import { vehicleConfig } from "../../configs/vehicleConfig";
 import { DataGrid } from "@mui/x-data-grid";
 import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
-import { useForm, SubmitHandler } from "react-hook-form"
-import url from "../../BackendUrl";
+import { useForm, SubmitHandler } from "react-hook-form";
+import agent from "../../api/agent";
 
 interface VehicleType {
   id: number;
   name: string;
   features: string;
   category: string;
-  
 }
 
 const useStyles = makeStyles(vehicleConfig);
@@ -33,68 +31,88 @@ const VehicleType: React.FC = () => {
   const classes = useStyles();
   const [vehicleTypes, setVehicleType] = useState<VehicleType[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedVehicleType, setSelectedVehicleType] = useState<Partial<VehicleType>>({
+  const [selectedVehicleType, setSelectedVehicleType] = useState<
+    Partial<VehicleType>
+  >({
     name: "",
     features: "",
-    category:"",
+    category: "",
   });
-  const {register,handleSubmit,reset,formState: { errors },} = useForm<VehicleType>()
-  const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false); 
-  const [VehicleTypeToDelete, setVehicleTypeToDelete] = useState<number | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<VehicleType>();
+  const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
+  const [VehicleTypeToDelete, setVehicleTypeToDelete] = useState<number | null>(
+    null
+  );
 
   const onSubmit: SubmitHandler<VehicleType> = async (data) => {
-    console.log(data)
+    console.log(data);
     try {
-
-        if (selectedVehicleType) {
-          if (selectedVehicleType.id) {
-           const updateObj = {...data, id: selectedVehicleType.id}
-            await axios.put(
-              `${url}/VehicleType/UpdateVehicleType?id=${selectedVehicleType.id}`,
-              updateObj
-            );
-          } else {
-            
-            await axios.post(
-              `${url}/VehicleType/CreateVehicleType`,
-              data
-            );
-          }
-          reset();
-          fetchCompanies();
-          setOpenDialog(false);
-          setSelectedVehicleType({});
-          toast.success("VehicleType saved successfully");
+      if (selectedVehicleType) {
+        if (selectedVehicleType.id) {
+          const updateObj = { ...data, id: selectedVehicleType.id };
+          // await axios.put(
+          //   `${url}/VehicleType/UpdateVehicleType?id=${selectedVehicleType.id}`,
+          //   updateObj
+          // );
+          await agent.VehicleType.updateVehicleType(updateObj);
+        } else {
+          // await axios.post(
+          //   `${url}/VehicleType/CreateVehicleType`,
+          //   data
+          // );
+          //error
+          await agent.VehicleType.createVehicleType(data);
         }
-      } catch (error) {
-        console.error("Error saving/editing VehicleType:", error);
-        toast.error("Error saving/editing VehicleType");
+        reset();
+        await fetchVehicleTypes();
+        setOpenDialog(false);
+        setSelectedVehicleType({});
+        toast.success("VehicleType saved successfully");
       }
-}
-
+    } catch (error) {
+      console.error("Error saving/editing VehicleType:", error);
+      toast.error("Error saving/editing VehicleType");
+    }
+  };
 
   useEffect(() => {
-    fetchCompanies();
+    fetchVehicleTypes();
   }, []);
 
-  const fetchCompanies = async () => {
+  // const fetchCompanies = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${url}/VehicleType/GetAllVehicleType`
+  //     );
+  //     setVehicleType(response.data);
+  //     console.log(response.data)
+  //   } catch (error) {
+  //     console.error("Error fetching VehicleType:", error);
+  //   }
+  // };
+
+  const fetchVehicleTypes = async () => {
     try {
-      const response = await axios.get(
-        `${url}/VehicleType/GetAllVehicleType`
+      await agent.VehicleType.GetALlVehicleType().then((response) =>
+        setVehicleType(response)
       );
-      setVehicleType(response.data);
-      console.log(response.data)
     } catch (error) {
       console.error("Error fetching VehicleType:", error);
     }
   };
 
-  const deleteCompany = async (id: number) => {
+  const deleteVehicleType = async (id: number) => {
     try {
-      await axios.delete(
-        `${url}/VehicleType/DeleteVehicleType?id=${id}`
-      );
-      fetchCompanies();
+      // await axios.delete(
+      //   `${url}/VehicleType/DeleteVehicleType?id=${id}`
+      // );
+      await agent.VehicleType.deleteVehicleType(id);
+      fetchVehicleTypes();
       toast.success("VehicleType deleted successfully");
     } catch (error) {
       console.error("Error deleting VehicleType:", error);
@@ -109,13 +127,13 @@ const VehicleType: React.FC = () => {
 
   const handleDelete = () => {
     if (VehicleTypeToDelete !== null) {
-      deleteCompany(VehicleTypeToDelete);
+      deleteVehicleType(VehicleTypeToDelete);
       setVehicleTypeToDelete(null);
       setConfirmDeleteDialog(false);
     }
   };
 
-  const handleEditCompany = (VehicleType: VehicleType) => {
+  const handleEditVehicleType = (VehicleType: VehicleType) => {
     setSelectedVehicleType(VehicleType);
     setOpenDialog(true);
   };
@@ -128,7 +146,7 @@ const VehicleType: React.FC = () => {
   function CustomNoRowsOverlay() {
     return (
       <StyledGridOverlay>
-        <NoRowsSVG/>
+        <NoRowsSVG />
         <Box sx={{ mt: 1 }}>No Rows</Box>
       </StyledGridOverlay>
     );
@@ -139,7 +157,6 @@ const VehicleType: React.FC = () => {
       <Button
         variant="contained"
         color="primary"
-        
         onClick={() => setOpenDialog(true)}
       >
         Create VehicleType
@@ -158,7 +175,7 @@ const VehicleType: React.FC = () => {
             {
               field: "actions",
               headerName: "Actions",
-              width: 300, 
+              width: 300,
               renderCell: (params: { row: VehicleType }) => (
                 <>
                   <Button
@@ -172,7 +189,7 @@ const VehicleType: React.FC = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleEditCompany(params.row)}
+                    onClick={() => handleEditVehicleType(params.row)}
                   >
                     Edit
                   </Button>
@@ -182,48 +199,46 @@ const VehicleType: React.FC = () => {
           ]}
           slots={{ noRowsOverlay: CustomNoRowsOverlay }}
         />
-      </Box>       
-         
-        <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Edit Company</DialogTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent>
-          <TextField
-            label="Name"
-            defaultValue={selectedVehicleType?.name}
-            {...register("name")}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Features"
-            
-            defaultValue={selectedVehicleType?.features}
-            {...register("features")}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-          />
-           <TextField
-            label="Category"
-            
-            defaultValue={selectedVehicleType?.features}
-            {...register("category")}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-          />
-        </DialogContent>
+      </Box>
 
-        <DialogActions>
-        <Button color="primary" type="submit">
-            Save
-          </Button>
-          <Button onClick={handleDialogClose} color="secondary">
-            Cancel
-          </Button>
-        </DialogActions>
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Edit VehicleType</DialogTitle>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogContent>
+            <TextField
+              label="Name"
+              defaultValue={selectedVehicleType?.name}
+              {...register("name")}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              label="Features"
+              defaultValue={selectedVehicleType?.features}
+              {...register("features")}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+            />
+            <TextField
+              label="Category"
+              defaultValue={selectedVehicleType?.features}
+              {...register("category")}
+              fullWidth
+              variant="outlined"
+              margin="normal"
+            />
+          </DialogContent>
+
+          <DialogActions>
+            <Button color="primary" type="submit">
+              Save
+            </Button>
+            <Button onClick={handleDialogClose} color="secondary">
+              Cancel
+            </Button>
+          </DialogActions>
         </form>
       </Dialog>
 
@@ -236,7 +251,7 @@ const VehicleType: React.FC = () => {
           Are you sure you want to delete this VehicleType?
         </DialogContent>
         <DialogActions>
-        <Button onClick={handleDelete} color="secondary">
+          <Button onClick={handleDelete} color="secondary">
             Yes
           </Button>
           <Button onClick={() => setConfirmDeleteDialog(false)} color="primary">
