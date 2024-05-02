@@ -22,7 +22,7 @@ interface VehicleType {
   id: number;
   name: string;
   features: string;
-  category: string;
+
 }
 
 const useStyles = makeStyles(vehicleConfig);
@@ -36,7 +36,7 @@ const VehicleType: React.FC = () => {
   >({
     name: "",
     features: "",
-    category: "",
+
   });
   const {
     register,
@@ -55,17 +55,10 @@ const VehicleType: React.FC = () => {
       if (selectedVehicleType) {
         if (selectedVehicleType.id) {
           const updateObj = { ...data, id: selectedVehicleType.id };
-          // await axios.put(
-          //   `${url}/VehicleType/UpdateVehicleType?id=${selectedVehicleType.id}`,
-          //   updateObj
-          // );
+     
           await agent.VehicleType.updateVehicleType(updateObj);
         } else {
-          // await axios.post(
-          //   `${url}/VehicleType/CreateVehicleType`,
-          //   data
-          // );
-          //error
+          
           await agent.VehicleType.createVehicleType(data);
         }
         reset();
@@ -171,7 +164,6 @@ const VehicleType: React.FC = () => {
           columns={[
             { field: "name", headerName: "Name", flex: 1 },
             { field: "features", headerName: "Features", flex: 1 },
-            { field: "category", headerName: "Category", flex: 1 },
             {
               field: "actions",
               headerName: "Actions",
@@ -221,14 +213,7 @@ const VehicleType: React.FC = () => {
               variant="outlined"
               margin="normal"
             />
-            <TextField
-              label="Category"
-              defaultValue={selectedVehicleType?.features}
-              {...register("category")}
-              fullWidth
-              variant="outlined"
-              margin="normal"
-            />
+     
           </DialogContent>
 
           <DialogActions>

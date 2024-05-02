@@ -253,9 +253,7 @@ const Vehicle: React.FC = () => {
   //     const response = await axios.post(
   //       "https://localhost:7202/api/Vehicle/AddAmenitiesToVehicle",
   //       data
-
   //     );
-
   //     // Handle the response as needed
   //     console.log("Amenities added to vehicle:", response.data);
   //     toast.success("Amenities added to vehicle successfully");
@@ -391,6 +389,7 @@ const Vehicle: React.FC = () => {
           <DialogContent>
             <TextField
               label="Name"
+              id="filled-error"
               type="text"
               defaultValue={selectedVehicle?.name}
               {...register("name")}
