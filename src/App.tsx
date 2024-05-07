@@ -8,13 +8,15 @@ import V from "./pages/Vehicle/v";
 import VehicleType from "./pages/VehicleType/vehicleType";
 import CU from "./pages/companyUser/cu";
 import ChauffuerV from "./pages/chauffuerVehicle/chauffuerVehicle";
+import SingnUp from "./pages/SignUp/signUp";
 
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/" index element={<Login />} />
+      <Route path="/" index element={<SingnUp />} />
+      <Route path="/login" index element={<Login />} />
       <Route path="/b" index element={<ChauffuerV />} /> 
       <Route path="/z" index element={<CU/>} /> 
       <Route path="/v" element={<ChauffuerImageUpload/>} /> 

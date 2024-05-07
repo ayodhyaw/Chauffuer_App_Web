@@ -64,45 +64,45 @@ const appRoutes: RouteType[] = [
       icon: <DashboardOutlinedIcon />
     },
   },
-  {
-    path: "/manage",
-    element: <ComponentPageLayout />,
-    state: "manage",
-    sidebarProps: {
-      displayText: "Manage",
-      icon: <AppsOutlinedIcon />
-    },
-    child: [
-      {
-        path: "/manage/addvehicle",
-        element: <Vehicle />,
-        state: "manage.addvehicle",
-        sidebarProps: {
-          displayText: "Vehicle",
-          // icon: <DirectionsCarIcon fontSize="small"/>
+  // {
+  //   path: "/manage",
+  //   element: <ComponentPageLayout />,
+  //   state: "manage",
+  //   sidebarProps: {
+  //     displayText: "Manage",
+  //     icon: <AppsOutlinedIcon />
+  //   },
+  //   child: [
+  //     {
+  //       path: "/manage/addvehicle",
+  //       element: <Vehicle />,
+  //       state: "manage.addvehicle",
+  //       sidebarProps: {
+  //         displayText: "Vehicle",
+  //         // icon: <DirectionsCarIcon fontSize="small"/>
           
-        },
-      },
-      {
-        path: "/manage/chauffuer",
-        element: <Chauffuer />,
-        state: "manage.chauffuer",
-        sidebarProps: {
-          displayText: "Chauffuer"
-        }
-      },
-      {
-        path: "/manage/company",
-        element: <Company />,
-        state: "manage.company",
-        sidebarProps: {
-          displayText: "company",
+  //       },
+  //     },
+  //     {
+  //       path: "/manage/chauffuer",
+  //       element: <Chauffuer />,
+  //       state: "manage.chauffuer",
+  //       sidebarProps: {
+  //         displayText: "Chauffuer"
+  //       }
+  //     },
+  //     {
+  //       path: "/manage/company",
+  //       element: <Company />,
+  //       state: "manage.company",
+  //       sidebarProps: {
+  //         displayText: "company",
 
-        }
-      },
+  //       }
+  //     },
 
-    ]
-  },
+  //   ]
+  // },
   {
     path: "/vehicle",
     element: <Vehicle />,

@@ -15,7 +15,7 @@ import { ChauffuerVehicleDto } from "../interfaces/ChauffuerVehicleDto";
 
 
 
-axios.defaults.baseURL = 'https://localhost:7202/api';
+axios.defaults.baseURL = 'http://localhost:5051/api';
 axios.interceptors.request.use(config => {
    const token = localStorage.getItem('jwt');
    if(token) config.headers.Authorization = `Bearer ${token}` 
