@@ -1,4 +1,3 @@
-// src/reducers/userReducer.ts
 
 import { UserActionTypes,UserDetails, SET_USER_DETAILS, CLEAR_USER_DETAILS } from "../../types/userTypes";
 

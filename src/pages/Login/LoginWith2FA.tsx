@@ -20,28 +20,24 @@ import axios from 'axios';
 
 const defaultTheme = createTheme();
 
-export default function Login() {
+export default function LoginWith2FA() {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5051/api/Auth/Login", { phoneNumber, password });
+      const response = await axios.post(`http://localhost:5051/api/Auth/LoginWith2A`,{phoneNumber,code});
       
       if (response.status === 200) {
-        // Handle successful login
-        localStorage.setItem('jwt', response.data.loginResponse.token);
-        localStorage.setItem('user', JSON.stringify(response.data.loginResponse.id));
-        localStorage.setItem('userDetails', JSON.stringify(response.data.loginResponse));
 
-        navigate("/2fa");
-        toast.success('Login Successful');
+        toast.success('Login successful!');
+        navigate("/dashboard");
       } else {
-        // Handle other status codes
-        toast.error('Login failed. Please check your email or password.');
+       
+        toast.error('Login failed. Please try again.');
       }
     } catch (error) {
       // Handle error
@@ -86,33 +82,22 @@ export default function Login() {
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="phoneNumber"
                 label="Phone Number"
-                name="phoneNumber"
-                autoComplete="tel"
-                autoFocus
+                variant="outlined"
+                fullWidth
+                margin="normal"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
               <TextField
-                margin="normal"
-                required
+                label="Verification Code"
+                variant="outlined"
                 fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                margin="normal"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+           
               <Button
                 type="submit"
                 fullWidth

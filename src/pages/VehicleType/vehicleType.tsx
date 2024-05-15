@@ -17,12 +17,12 @@ import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form";
 import agent from "../../api/agent";
+import { useSelector } from "react-redux";
 
 interface VehicleType {
   id: number;
   name: string;
   features: string;
-
 }
 
 const useStyles = makeStyles(vehicleConfig);
@@ -36,7 +36,6 @@ const VehicleType: React.FC = () => {
   >({
     name: "",
     features: "",
-
   });
   const {
     register,
@@ -50,23 +49,23 @@ const VehicleType: React.FC = () => {
   );
 
   const onSubmit: SubmitHandler<VehicleType> = async (data) => {
-    console.log(data);
     try {
-      if (selectedVehicleType) {
-        if (selectedVehicleType.id) {
-          const updateObj = { ...data, id: selectedVehicleType.id };
-     
-          await agent.VehicleType.updateVehicleType(updateObj);
-        } else {
-          
-          await agent.VehicleType.createVehicleType(data);
-        }
-        reset();
-        await fetchVehicleTypes();
-        setOpenDialog(false);
-        setSelectedVehicleType({});
-        toast.success("VehicleType saved successfully");
+      if (!data.name || !data.features) {
+        toast.error("Please fill in all required fields");
+        return;
       }
+
+      if (selectedVehicleType && selectedVehicleType.id) {
+        const updateObj = { ...data, id: selectedVehicleType.id };
+        await agent.VehicleType.updateVehicleType(updateObj);
+      } else {
+        await agent.VehicleType.createVehicleType(data);
+      }
+      reset();
+      await fetchVehicleTypes();
+      setOpenDialog(false);
+      setSelectedVehicleType({});
+      toast.success("VehicleType saved successfully");
     } catch (error) {
       console.error("Error saving/editing VehicleType:", error);
       toast.error("Error saving/editing VehicleType");
@@ -76,18 +75,6 @@ const VehicleType: React.FC = () => {
   useEffect(() => {
     fetchVehicleTypes();
   }, []);
-
-  // const fetchCompanies = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${url}/VehicleType/GetAllVehicleType`
-  //     );
-  //     setVehicleType(response.data);
-  //     console.log(response.data)
-  //   } catch (error) {
-  //     console.error("Error fetching VehicleType:", error);
-  //   }
-  // };
 
   const fetchVehicleTypes = async () => {
     try {
@@ -101,9 +88,6 @@ const VehicleType: React.FC = () => {
 
   const deleteVehicleType = async (id: number) => {
     try {
-      // await axios.delete(
-      //   `${url}/VehicleType/DeleteVehicleType?id=${id}`
-      // );
       await agent.VehicleType.deleteVehicleType(id);
       fetchVehicleTypes();
       toast.success("VehicleType deleted successfully");
@@ -112,7 +96,8 @@ const VehicleType: React.FC = () => {
       toast.error("Error deleting VehicleType");
     }
   };
-
+  const state = useSelector((state: any) => state)
+  console.log(state,"state")
   const handleConfirmDelete = (id: number) => {
     setVehicleTypeToDelete(id);
     setConfirmDeleteDialog(true);
@@ -200,20 +185,23 @@ const VehicleType: React.FC = () => {
             <TextField
               label="Name"
               defaultValue={selectedVehicleType?.name}
-              {...register("name")}
+              {...register("name", { required: true })}
               fullWidth
               variant="outlined"
               margin="normal"
+              error={!!errors.name}
+              helperText={errors.name && "Name is required"}
             />
             <TextField
               label="Features"
               defaultValue={selectedVehicleType?.features}
-              {...register("features")}
+              {...register("features", { required: true })}
               fullWidth
               variant="outlined"
               margin="normal"
+              error={!!errors.features}
+              helperText={errors.features && "Features are required"}
             />
-     
           </DialogContent>
 
           <DialogActions>

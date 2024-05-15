@@ -9,6 +9,7 @@ import VehicleType from "./pages/VehicleType/vehicleType";
 import CU from "./pages/companyUser/cu";
 import ChauffuerV from "./pages/chauffuerVehicle/chauffuerVehicle";
 import SingnUp from "./pages/SignUp/signUp";
+import LoginWith2FA from "./pages/Login/LoginWith2FA";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Routes>
       <Route path="/" index element={<SingnUp />} />
       <Route path="/login" index element={<Login />} />
+      <Route path="/2fa" element={<LoginWith2FA/>} /> 
       <Route path="/b" index element={<ChauffuerV />} /> 
       <Route path="/z" index element={<CU/>} /> 
       <Route path="/v" element={<ChauffuerImageUpload/>} /> 
