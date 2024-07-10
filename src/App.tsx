@@ -10,6 +10,7 @@ import CU from "./pages/companyUser/cu";
 import ChauffuerV from "./pages/chauffuerVehicle/chauffuerVehicle";
 import SingnUp from "./pages/SignUp/signUp";
 import LoginWith2FA from "./pages/Login/LoginWith2FA";
+import SignUpWithOTP from "./pages/SignUp/SignUpWithOTP";
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
       <Route path="/b" index element={<ChauffuerV />} /> 
       <Route path="/z" index element={<CU/>} /> 
       <Route path="/v" element={<ChauffuerImageUpload/>} /> 
-      <Route path="/c" element={<UpdateProfile/>} />     
+      <Route path="/c" element={<SignUpWithOTP/>} />     
       <Route path="/f" element={<VehicleType/>} />    
       <Route path="/" element={<MainLayout />}>
           {routes}

@@ -26,7 +26,7 @@ import Company from "../pages/Company/company";
 import { pink } from "@mui/material/colors";
 import CompanyUser from "../pages/companyUser/companyUser";
 import AddHomeWorkIcon from '@mui/icons-material/AddHomeWork';
-import Amenity from "../pages/Aminity/aminity";
+import Amenity from "../pages/aminity/aminity";
 import Logout from "../pages/Logout/logout";
 import LogoutIcon from '@mui/icons-material/Logout';
 import DocumentType from "../pages/DocumentType/doumentType";

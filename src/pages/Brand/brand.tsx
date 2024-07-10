@@ -136,7 +136,7 @@ const Brand: React.FC = () => {
         color="primary"
         onClick={() => setOpenDialog(true)}
       >
-        Create Region
+        Create Brand
       </Button>
       <Divider style={{ margin: "30px 0" }} />
       <Box sx={{ width: "100%", height: "calc(100% - 200px)" }}>
@@ -176,7 +176,7 @@ const Brand: React.FC = () => {
       </Box>       
          
         <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Edit Company</DialogTitle>
+        <DialogTitle>Edit Brand</DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <TextField

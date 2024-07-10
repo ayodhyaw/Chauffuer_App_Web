@@ -94,10 +94,10 @@ const Chauffuer: React.FC = () => {
     setPreviewDialogOpen(false);
   };
 
-  const handlePreviewOpen = (image: string) => {
-    setPreviewImage(image);
-    setPreviewDialogOpen(true);
-  };
+  // const handlePreviewOpen = (image: string) => {
+  //   setPreviewImage(image);
+  //   setPreviewDialogOpen(true);
+  // };
 
   const onSubmit: SubmitHandler<Chauffuer> = async (data) => {
     console.log(data);
@@ -138,9 +138,10 @@ const Chauffuer: React.FC = () => {
   };
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  // const handleTogglePasswordVisibility = () => {
+  //   setShowPassword(!showPassword);
+  // };
+
   const handleDelete = () => {
     if (chauffuerIdToDelete !== null) {
       deleteChauffuer(chauffuerIdToDelete);
@@ -159,18 +160,18 @@ const Chauffuer: React.FC = () => {
     setOpenDialog(false);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const filesArray = Array.from(event.target.files);
-      setUploadedFiles(filesArray);
-    }
-  };
+  // const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files) {
+  //     const filesArray = Array.from(event.target.files);
+  //     setUploadedFiles(filesArray);
+  //   }
+  // };
 
-  const handleFileRemove = (index: number) => {
-    const updatedFiles = [...uploadedFiles];
-    updatedFiles.splice(index, 1);
-    setUploadedFiles(updatedFiles);
-  };
+  // const handleFileRemove = (index: number) => {
+  //   const updatedFiles = [...uploadedFiles];
+  //   updatedFiles.splice(index, 1);
+  //   setUploadedFiles(updatedFiles);
+  // };
 
   function CustomNoRowsOverlay() {
     return (

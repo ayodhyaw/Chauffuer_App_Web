@@ -56,7 +56,7 @@ const DocumentType: React.FC = () => {
           await fetchCompanies();
           setOpenDialog(false);
           setSelectedDocumentType({});
-          toast.success("Company saved successfully");
+          toast.success("DocumentType saved successfully");
         }
       } catch (error) {
         console.error("Error saving/editing documentType:", error);
@@ -168,7 +168,7 @@ const DocumentType: React.FC = () => {
       </Box>       
          
         <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Edit Company</DialogTitle>
+        <DialogTitle></DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <TextField
@@ -208,7 +208,7 @@ const DocumentType: React.FC = () => {
       >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete this company?
+          Are you sure you want to delete this DocumentType?
         </DialogContent>
         <DialogActions>
         <Button onClick={handleDelete} color="secondary">

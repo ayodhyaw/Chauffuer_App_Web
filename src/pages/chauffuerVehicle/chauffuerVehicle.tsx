@@ -143,9 +143,9 @@ const ChauffuerV: React.FC = () => {
   };
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  // const handleTogglePasswordVisibility = () => {
+  //   setShowPassword(!showPassword);
+  // };
   const handleDelete = () => {
     if (chauffuerIdToDelete !== null) {
       deleteChauffuer(chauffuerIdToDelete);
@@ -387,7 +387,7 @@ const ChauffuerV: React.FC = () => {
       >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete this Chauffuer?
+          Are you sure you want to delete this Chauffuer's Vehicle?
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDelete} color="secondary">
@@ -437,7 +437,7 @@ const ChauffuerV: React.FC = () => {
               Cancel
             </Button>
             <Button type="submit" color="primary">
-              Add vehicle
+              Add Vehicle
             </Button>
           </DialogActions>
         </form>

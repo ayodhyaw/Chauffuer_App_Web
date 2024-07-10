@@ -19,7 +19,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { StyledGridOverlay } from "../../configs/GlobalStyles/StyledComponents";
 import NoRowsSVG from "../../configs/GlobalStyles/NoRowsSVG";
 import { useForm, SubmitHandler } from "react-hook-form";
-import url from "../../BackendUrl";
 import agent from "../../api/agent";
 import { Amenitydto } from "../../interfaces/AminityDto";
 import { AmenityType } from "../../enum/amenityType";

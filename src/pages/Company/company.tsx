@@ -185,7 +185,7 @@ const Company: React.FC = () => {
       </Box>       
          
         <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Edit Company</DialogTitle>
+        <DialogTitle></DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <TextField
